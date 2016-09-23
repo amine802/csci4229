@@ -1,0 +1,18 @@
+Sami Meharzi
+HW2: Lorenz Attractor
+Completed in ~3 hours
+
+Instructions:
+1. Run make on Terminal (Compiles on Ubuntu)
+2. Run ./lorenz on Terminal
+3. Have fun
+
+Controls after starting animation:
+Arrow Keys rotate the view
+s - Decrease Lorenz parameter s by 1
+S - Increase Lorenz parameter s by 1
+b - Decrease Lorenz parameter b by 1
+B - Increase Lorenz parameter b by 1
+r - Decrease Lorenz parameter r by 1
+R - Increase Lorenz parameter r by 1
+0 - Reset everything
