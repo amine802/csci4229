@@ -166,7 +166,7 @@ void house(){					//Builds House with 4 walls, a floor, and a roof
 
 void display()
 {
-  glClear(GL_COLOR_BUFFER_BIT);   //Clear Everything
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);   //Clear Everything
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
   glOrtho(-5, 5, -5, 5, -10, 10);
@@ -279,7 +279,7 @@ int main(int argc,char* argv[])
   //  Initialize GLUT and process user parameters
    glutInit(&argc,argv);
    //  Request double buffered, true color window 
-   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    //  Request 500 x 500 pixel window
    glutInitWindowSize(750,750);
    //  Create the window
