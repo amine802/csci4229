@@ -1,19 +1,24 @@
 Sami Meharzi
 HW4 - Projections
-Completed in ??
+Completed in ~2-2.5 hours
 
 Instructions:
-1. Run make on Terminal (Compiles on Ubuntu)
+1. Run make on Terminal
 2. Run ./hw4 on Terminal
 3. Have fun
 
 Controls after starting animation:
 Arrow Keys rotate the view
-1 - Toggle view for Object 1
-2 - Toggle view for Object 2
-3 - Toggle view for Object 3
-4 - Toggle view for Object 4
-5 - Toggle view for Object 5
-6 - Toggle view for Object 6
-7 - Toggle view for Object 7
+1	- Toggle view for Object 1
+2	- Toggle view for Object 2
+3	- Toggle view for Object 3
+4	- Toggle view for Object 4
+5	- Toggle view for Object 5
+6 	- Toggle view for Object 6
+7 	- Toggle view for Object 7
 Esc - Exits animation
+
+Extra Controls Added for this assignment
+m 	- Switch between Orthogonal and Perspective view
++/- - Change the field of view for perspective
+a/f - Zoom in and out

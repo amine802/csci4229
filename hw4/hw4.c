@@ -1,12 +1,15 @@
 /*
  * Simple program that builds a House like object and puts them together
- * to form a cool pattern
+ * to form a cool pattern and allows orthogonal and perspective projections.
+ * This was made using code from ex9.c and my Hw3
  */
 
 //Libraries and Shit
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <math.h>
+
 #define GL_GLEXT_PROTOTYPES
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -17,16 +20,23 @@
 /*  Global Variables  */
 int th=0;       // Azimuth of view angle
 int ph=0;       // Elevation of view angle
-int mode=1;     // Dimension (1-4)
-double dim=2;   // Dimension of orthogonal box
+int mode=0;     // Dimension (1-4)
+double dim=7.5;   // Dimension of orthogonal box
 char* text[] = {"3D"};  // Dimension display text
+int fov=55;       //  Field of view (for perspective)		<---- Taken from ex9.c
+double asp=1;     //  Aspect ratio 				<---- Taken from ex9.c
+//double dim=5.0;   //  Size of world				<---- Taken from ex9.c
+
 int house1 = 1;	// Variables to turn on display for each of the objects
 int house2 = 1;
 int house3 = 1;
 int house4 = 1;
 int house5 = 1;
 int house6 = 1;
-int house7 = 1;
+
+//  Macro for sin & cos in degrees			<---- Taken from ex9.c
+#define Cos(th) cos(th * 3.1415927/180)
+#define Sin(th) sin(th * 3.1415927/180)
 
 /*
  *  Convenience routine to output raster text <---- Taken from ex6.c
@@ -47,13 +57,31 @@ void Print(const char* format , ...)
 		  glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,*ch++);
 }
 
+static void Project()
+{
+   //  Tell OpenGL we want to manipulate the projection matrix
+   glMatrixMode(GL_PROJECTION);
+   //  Undo previous transformations
+   glLoadIdentity();
+   //  Perspective transformation
+   if (mode)
+      gluPerspective(fov,asp,dim/10,10*dim);
+   //  Orthogonal projection
+   else
+      glOrtho(-asp*dim,+asp*dim, -dim,+dim, -dim,+dim);
+   //  Switch to manipulating the model matrix
+   glMatrixMode(GL_MODELVIEW);
+   //  Undo previous transformations
+   glLoadIdentity();
+}
+
 void key(unsigned char ch,int x,int y)
 {
   
    // Reset Everything
    if (ch == '0'){
       th = ph = 0;
-      house1 = house2 = house3 = house4 = house5 = house6 = house7 = 1;
+      house1 = house2 = house3 = house4 = house5 = house6 =  1;
    }
    //  Modify which houses are visible
    else if (ch == '1'){ 
@@ -80,14 +108,25 @@ void key(unsigned char ch,int x,int y)
 	   if(house6 == 0){ house6 = 1;}
 	   else{ house6 = 0;}
    }
-   else if (ch == '7'){ 
-	   if(house7 == 0){ house7 = 1;}
-	   else{ house7 = 0;}
+   else if (ch == 'a' && dim > 1){
+   		dim -= 0.1;
+   }
+   else if (ch == 'f' ){
+   		dim += 0.1;
+   }
+   else if (ch == 'm' || ch == 'M'){
+   		mode = 1-mode;
+   }
+   else if (ch == '-' && ch>1){
+   		fov--;
+   }
+   else if (ch == '+' && ch<179){
+   		fov++;
    }
    else if (ch == 27){
 		exit(0);
    }
-  
+  	Project();
    //  Redisplay
    glutPostRedisplay();
 }
@@ -95,11 +134,11 @@ void key(unsigned char ch,int x,int y)
 void Floor(){					//Builds House floor
 	glBegin(GL_QUADS);
 
-	glColor3ub(0,0,255);
-	glVertex3f(-1, -4.1, 1);
-	glVertex3f(1, -4.1, 1);
-	glVertex3f(1, -4.1, -1);
-	glVertex3f(-1, -4.1, -1);
+	glColor3ub(255,0,0);
+	glVertex3f(-1, -4, 1);
+	glVertex3f(1, -4, 1);
+	glVertex3f(1, -4, -1);
+	glVertex3f(-1, -4, -1);
 
 	glEnd();
 	}
@@ -108,8 +147,8 @@ void Floor(){					//Builds House floor
 void wall(){					//Makes one square wall
 	glBegin(GL_QUADS);
 
-	glColor3ub(0,0,255);
-	glVertex3f(-1, -4, 1);e
+	glColor3ub(255,255,255);
+	glVertex3f(-1, -4, 1);
 	glVertex3f(1, -4, 1);
 	glVertex3f(1, -1, 1);
 	glVertex3f(-1, -1, 1);
@@ -118,7 +157,7 @@ void wall(){					//Makes one square wall
 	
 	glBegin(GL_LINE_LOOP);		// Outline on wall
 	
-	glColor3ub(255,20,147);
+	glColor3ub(221, 194, 59);
 	glVertex3f(-1, -4, 1);
 	glVertex3f(1, -4, 1);
 	glVertex3f(1, -1, 1);
@@ -130,7 +169,7 @@ void wall(){					//Makes one square wall
 void roof(){					//Makes roof section for that piece of wall
 	glBegin(GL_TRIANGLES);
 
-	glColor3ub(0, 0, 255);
+	glColor3ub(255, 0, 0);
 	glVertex3f(1, -1, 1);
 	glVertex3f(0, 0, 0);
 	glVertex3f(-1, -1, 1);
@@ -139,7 +178,7 @@ void roof(){					//Makes roof section for that piece of wall
 	
 	glBegin(GL_LINE_LOOP);
 
-	glColor3ub(255, 255, 255);	//Outline one roof
+	glColor3ub(221, 194, 59);	//Outline one roof
 	glVertex3f(1, -1, 1);
 	glVertex3f(0, 0, 0);
 	glVertex3f(-1, -1, 1);
@@ -169,10 +208,20 @@ void display()
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);   //Clear Everything
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
-  glOrtho(-5, 5, -5, 5, -10, 10);
 
-  glRotated(ph,1,0,0); // Initial view angle
-  glRotated(th,0,1,0); 
+  if (mode)
+   {
+      double Ex = -2*dim*Sin(th)*Cos(ph);
+      double Ey = +2*dim        *Sin(ph);
+      double Ez = +2*dim*Cos(th)*Cos(ph);
+      gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(ph),0);
+   }
+   //  Orthogonal - set world orientation
+   else
+   {
+      glRotatef(ph,1,0,0);
+      glRotatef(th,0,1,0);
+   }
   
   if(house1 == 1){		// If statements determine whether a house is displayed or not
 	house();
@@ -206,19 +255,10 @@ void display()
 	glRotated(90, 0, 0, -1);
 	house();
 	glPopMatrix();
-  }
-  
-  if(house7 == 1){
-	glPushMatrix();
-	glTranslated(5, 0, 5);
-	glScaled(1.5, 1, 1.5);
-	house();
-	glPopMatrix();
-  }
-  
+  }  
   
   glWindowPos2i(5,5);
-  Print("View Angle=%d,%d\n",th,ph);    //  Display View angles
+  Print("Angle=%d,%d  Dim=%.1f FOV=%d Projection=%s",th,ph,dim,fov,mode?"Perpective":"Orthogonal");
   glFlush();
   glutSwapBuffers();    
 }
@@ -244,6 +284,8 @@ void special(int key,int x,int y)
    //  Keep angles to +/-360 degrees
    th %= 360;
    ph %= 360;
+
+   Project();
    //  Tell GLUT it is necessary to redisplay the scene
    glutPostRedisplay();
 }
@@ -254,21 +296,27 @@ void special(int key,int x,int y)
 
 void reshape(int width,int height) 
 {
-   //  Ratio of the width to the height of the window
-   double w2h = (height>0) ? (double)width/height : 1;
+   // //  Ratio of the width to the height of the window
+   // double w2h = (height>0) ? (double)width/height : 1;
+   // //  Set the viewport to the entire window
+   // glViewport(0,0, width,height);
+   // //  Tell OpenGL we want to manipulate the projection matrix
+   // glMatrixMode(GL_PROJECTION);
+   // //  Undo previous transformations
+   // glLoadIdentity();
+   // //  Orthogonal projection box adjusted for the
+   // //  aspect ratio of the window
+   // glOrtho(-dim*w2h,+dim*w2h, -dim,+dim, -dim,+dim);
+   // //  Switch to manipulating the model matrix
+   // glMatrixMode(GL_MODELVIEW);
+   // //  Undo previous transformations
+   // glLoadIdentity();
+
+	asp = (height>0) ? (double)width/height : 1;
    //  Set the viewport to the entire window
    glViewport(0,0, width,height);
-   //  Tell OpenGL we want to manipulate the projection matrix
-   glMatrixMode(GL_PROJECTION);
-   //  Undo previous transformations
-   glLoadIdentity();
-   //  Orthogonal projection box adjusted for the
-   //  aspect ratio of the window
-   glOrtho(-dim*w2h,+dim*w2h, -dim,+dim, -dim,+dim);
-   //  Switch to manipulating the model matrix
-   glMatrixMode(GL_MODELVIEW);
-   //  Undo previous transformations
-   glLoadIdentity();
+   //  Set projection
+   Project();	
 }
 
 /*
@@ -283,7 +331,7 @@ int main(int argc,char* argv[])
    //  Request 500 x 500 pixel window
    glutInitWindowSize(750,750);
    //  Create the window
-   glutCreateWindow("Sami Meharzi: HW 3");
+   glutCreateWindow("Sami Meharzi: HW 4");
    //  Tell GLUT to call "display" when the scene should be drawn
    glutDisplayFunc(display);
   //  Tell GLUT to call "reshape" when the window is resized
