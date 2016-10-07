@@ -1,10 +1,10 @@
 Sami Meharzi
-HW4 - Projections
-Completed in ~2-2.5 hours
+HW5 - Lightings
+Completed in ~ 2.5 - 3 hours
 
 Instructions:
 1. Run make on Terminal
-2. Run ./hw4 on Terminal
+2. Run ./hw5 on Terminal
 3. Have fun
 
 Controls after starting animation:
@@ -15,10 +15,17 @@ Arrow Keys rotate the view
 4	- Toggle view for Object 4
 5	- Toggle view for Object 5
 6 	- Toggle view for Object 6
-7 	- Toggle view for Object 7
-Esc - Exits animation
 
-Extra Controls Added for this assignment
 m 	- Switch between Orthogonal and Perspective view
 +/- - Change the field of view for perspective
-a/f - Zoom in and out
+z/Z - Zoom in and out
+Esc - Exits animation
+
+l/L - Toggle light on and off
+[]	- Lower/Raise the light
+a/A - Increase/Decrease Ambient light setting
+d/D - Increase/Decrease Diffuse light setting
+s/S - Increase/Decrease Specular light setting
+e/E - Increase/Decrease Emitted light setting
+n/N - Increase/Decrease Shininess setting
+r/R - Toggle light moving
