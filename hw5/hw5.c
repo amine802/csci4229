@@ -19,15 +19,15 @@ int light=1;
 int move=1;
 //double dim=5.0;   //  Size of world				<---- Taken from ex9.c
 
-int house1 = 1;	// Variables to turn on display for each of the objects
-int house2 = 1;
-int house3 = 1;
-int house4 = 1;
-int house5 = 1;
-int house6 = 1;
+int piece1 = 1;	// Variables to turn on display for each of the objects
+int piece2 = 1;
+int piece3 = 1;
+int piece4 = 1;
+int piece5 = 1;
+int piece6 = 1;
 
 int one       =   1;  // Unit value         <---- All these variables taken from ex13.c
-int distance  =   5;  // Light Distance     
+int distance  =  10;  // Light Distance     
 int inc       =  10;  // Ball increment     
 int smooth    =   1;  // Smooth/Flat shading
 int local     =   0;  // Local Viewer Model
@@ -40,27 +40,104 @@ float shiny   =   1;  // Shininess (value)
 int zh        =  90;  // Light azimuth
 float ylight  =   0;  // Elevation of light
 
-/*
- *  Convenience routine to output raster text <---- Taken from ex6.c
- *  Use VARARGS to make this more flexible
- */
-#define LEN 8192  // Maximum length of text string
-void Print(const char* format , ...)
-{
-	 char    buf[LEN];
-	 char*   ch=buf;
-	va_list args;
-	   //  Turn the parameters into a character string
-	   va_start(args,format);
-	   vsnprintf(buf,LEN,format,args);
-	   va_end(args);
-	   //  Display the characters one at a time at the current raster position
-	   while (*ch)
-		  glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,*ch++);
+
+
+
+void bottom(){         //Builds bottom of the piece
+  glBegin(GL_QUADS);
+
+  glColor3ub(255,0,0);
+  glNormal3f( 0, -1, 0);
+  glVertex3f(-1, -4, 1);
+  glVertex3f(1, -4, 1);
+  glVertex3f(1, -4, -1);
+  glVertex3f(-1, -4, -1);
+
+  glEnd();
+
+  // glBegin(GL_TRIANGLES);       Experimenting with a different shape here. Will implement another time
+
+  // glColor3ub(255, 0, 0);
+  // glNormal3f( 0, 0, 0);
+  // glVertex3f(1, -4, 1);
+  // glVertex3f(0, -5, 0);
+  // glVertex3f(-1, -4, 1);
+
+  // glEnd();
+  
+  // glBegin(GL_LINE_LOOP);
+
+  // glColor3ub(221, 194, 59); //Outline one roof
+  // glVertex3f(1, -4, 1);
+  // glVertex3f(0, -5, 0);
+  // glVertex3f(-1, -4, 1);
+
+  // glEnd();
+
+  }
+  
+void wall(){          //Makes one rectangular wall
+  glBegin(GL_QUADS);
+
+  glColor3ub(255,255,255);
+  glNormal3f( 0, 0, 1);
+  glVertex3f(-1, -4, 1);
+  glVertex3f(1, -4, 1);
+  glVertex3f(1, -1, 1);
+  glVertex3f(-1, -1, 1);
+
+  glEnd();
+  
+  glBegin(GL_LINE_LOOP);    // Outline on wall
+  
+  glColor3ub(221, 194, 59);
+  glVertex3f(-1, -4, 1);
+  glVertex3f(1, -4, 1);
+  glVertex3f(1, -1, 1);
+  glVertex3f(-1, -1, 1);
+  
+  glEnd();
+  }
+  
+void roof(){          //Makes roof section for that piece of wall
+  glBegin(GL_TRIANGLES);
+
+  glColor3ub(255, 0, 0);
+  glNormal3f( 0, 2, 2);
+  glVertex3f(1, -1, 1);
+  glVertex3f(0, 0, 0);
+  glVertex3f(-1, -1, 1);
+
+  glEnd();
+  
+  glBegin(GL_LINE_LOOP);
+
+  glColor3ub(221, 194, 59); //Outline one roof
+  glVertex3f(1, -1, 1);
+  glVertex3f(0, 0, 0);
+  glVertex3f(-1, -1, 1);
+
+  glEnd();
+  }
+  
+void house(){         //Builds part with 4 walls, a bottom, and a roof
+  glPushMatrix();
+  bottom();
+  wall();
+  roof();
+  glRotated(90, 0, 1, 0);
+  wall();
+  roof();
+  glRotated(90, 0, 1, 0);
+  wall();
+  roof();
+  glRotated(90, 0, 1, 0);
+  wall();
+  roof();
+  glPopMatrix();
 }
 
-
-static void Vertex(double th,double ph)
+static void Vertex(double th,double ph)       //<-- Taken from ex13.c
 {
    double x = Sin(th)*Cos(ph);
    double y = Cos(th)*Cos(ph);
@@ -71,7 +148,7 @@ static void Vertex(double th,double ph)
    glVertex3d(x,y,z);
 }
 
-static void ball(double x,double y,double z,double r)
+static void ball(double x,double y,double z,double r)       //<-- Taken from ex13.c
 {
    int th,ph;
    float yellow[] = {1.0,1.0,0.0,1.0};
@@ -101,11 +178,11 @@ static void ball(double x,double y,double z,double r)
    glPopMatrix();
 }
 
-void idle()
+void idle()                                 //What glut does when user isn't inputting anything
 {
    //  Elapsed time in seconds
-   double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
-   zh = fmod(90*t,360.0);
+   double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;        
+   zh = fmod(90*t,360.0);                             //Modifies the position of the light ball
    //  Tell GLUT it is necessary to redisplay the scene
    glutPostRedisplay();
 }
@@ -116,32 +193,32 @@ void key(unsigned char ch,int x,int y)
    // Reset Everything
    if (ch == '0'){
       th = ph = 0;
-      house1 = house2 = house3 = house4 = house5 = house6 =  1;
+      piece1 = piece2 = piece3 = piece4 = piece5 = piece6 =  1;
    }
    //  Modify which houses are visible
    else if (ch == '1'){ 
-	   if(house1 == 0){ house1 = 1;}
-	   else{ house1 = 0;}
+	   if(piece1 == 0){ piece1 = 1;}
+	   else{ piece1 = 0;}
    }
    else if (ch == '2'){ 
-	   if(house2 == 0){ house2 = 1;}
-	   else{ house2 = 0;}
+	   if(piece2 == 0){ piece2 = 1;}
+	   else{ piece2 = 0;}
    }
    else if (ch == '3'){ 
-	   if(house3 == 0){ house3 = 1;}
-	   else{ house3 = 0;}
+	   if(piece3 == 0){ piece3 = 1;}
+	   else{ piece3 = 0;}
    }
    else if (ch == '4'){ 
-	   if(house4 == 0){ house4 = 1;}
-	   else{ house4 = 0;}
+	   if(piece4 == 0){ piece4 = 1;}
+	   else{ piece4 = 0;}
    }
    else if (ch == '5'){ 
-	   if(house5 == 0){ house5 = 1;}
-	   else{ house5 = 0;}
+	   if(piece5 == 0){ piece5 = 1;}
+	   else{ piece5 = 0;}
    }
    else if (ch == '6'){ 
-	   if(house6 == 0){ house6 = 1;}
-	   else{ house6 = 0;}
+	   if(piece6 == 0){ piece6 = 1;}
+	   else{ piece6 = 0;}
    }
    else if (ch == 'z' && dim > 1){
    		dim -= 0.1;
@@ -211,100 +288,28 @@ void key(unsigned char ch,int x,int y)
 }
 
 
-
-void Floor(){					//Builds House floor
-	glBegin(GL_QUADS);
-
-	glColor3ub(255,0,0);
-	glVertex3f(-1, -4, 1);
-	glVertex3f(1, -4, 1);
-	glVertex3f(1, -4, -1);
-	glVertex3f(-1, -4, -1);
-
-	glEnd();
-	}
-	
-	
-void wall(){					//Makes one square wall
-	glBegin(GL_QUADS);
-
-	glColor3ub(255,255,255);
-	glVertex3f(-1, -4, 1);
-	glVertex3f(1, -4, 1);
-	glVertex3f(1, -1, 1);
-	glVertex3f(-1, -1, 1);
-
-	glEnd();
-	
-	glBegin(GL_LINE_LOOP);		// Outline on wall
-	
-	glColor3ub(221, 194, 59);
-	glVertex3f(-1, -4, 1);
-	glVertex3f(1, -4, 1);
-	glVertex3f(1, -1, 1);
-	glVertex3f(-1, -1, 1);
-	
-	glEnd();
-	}
-	
-void roof(){					//Makes roof section for that piece of wall
-	glBegin(GL_TRIANGLES);
-
-	glColor3ub(255, 0, 0);
-	glVertex3f(1, -1, 1);
-	glVertex3f(0, 0, 0);
-	glVertex3f(-1, -1, 1);
-
-	glEnd();
-	
-	glBegin(GL_LINE_LOOP);
-
-	glColor3ub(221, 194, 59);	//Outline one roof
-	glVertex3f(1, -1, 1);
-	glVertex3f(0, 0, 0);
-	glVertex3f(-1, -1, 1);
-
-	glEnd();
-	}
-	
-void house(){					//Builds House with 4 walls, a floor, and a roof
-	glPushMatrix();
-	Floor();
-	wall();
-	roof();
-	glRotated(90, 0, 1, 0);
-	wall();
-	roof();
-	glRotated(90, 0, 1, 0);
-	wall();
-	roof();
-	glRotated(90, 0, 1, 0);
-	wall();
-	roof();
-	glPopMatrix();
-}
-
 void display()
 {
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);   //Clear Everything
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
 
-  if (mode)
+  if (mode)                                           //Changes world orientation from orthogonal to perspective
    {
       double Ex = -2*dim*Sin(th)*Cos(ph);
       double Ey = +2*dim        *Sin(ph);
       double Ez = +2*dim*Cos(th)*Cos(ph);
       gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(ph),0);
    }
-   //  Orthogonal - set world orientation
-   else
+   else                                               //Orthogonal orientation
    {
       glRotatef(ph,1,0,0);
       glRotatef(th,0,1,0);
    }
   
-  if (light){
+   glShadeModel(smooth ? GL_SMOOTH : GL_FLAT);
+
+  if (light){                                     // <---- Taken from ex13.c/ How the program projects light with the ball
         //  Translate intensity to color vectors
         float Ambient[]   = {0.01*ambient ,0.01*ambient ,0.01*ambient ,1.0};
         float Diffuse[]   = {0.01*diffuse ,0.01*diffuse ,0.01*diffuse ,1.0};
@@ -331,46 +336,48 @@ void display()
         glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
         glLightfv(GL_LIGHT0,GL_POSITION,Position);
    }
-   else{
+   else{                                        //Disables lighting
     glDisable(GL_LIGHTING);
    }
 
-  if(house1 == 1){		// If statements determine whether a house is displayed or not
+  if(piece1 == 1){		// If statements determine whether a piece is displayed or not
 	house();
   }
-  if(house2 == 1){
+  if(piece2 == 1){
 	glPushMatrix();
 	glRotated(180, 1, 0, 0);
 	house();
 	glPopMatrix();
   }
-  if(house3 == 1){
+  if(piece3 == 1){
 	glPushMatrix();
 	glRotated(90, 1, 0, 0);
 	house();
 	glPopMatrix();
   }
-  if(house4 == 1){
+  if(piece4 == 1){
 	glPushMatrix();
 	glRotated(90, -1, 0, 0);
 	house();
 	glPopMatrix();
   }
-  if(house5 == 1){
+  if(piece5 == 1){
 	glPushMatrix();
 	glRotated(90, 0, 0, 1);
 	house();
 	glPopMatrix();
   }
-  if(house6 == 1){
+  if(piece6 == 1){
 	glPushMatrix();
 	glRotated(90, 0, 0, -1);
 	house();
 	glPopMatrix();
   }  
-  
+
+  glDisable(GL_LIGHTING);
+
   glWindowPos2i(5,5);
-  Print("Angle=%d,%d  Dim=%.1f FOV=%d Projection=%s Light=%s",
+  Print("Angle=%d,%d  Dim=%.1f FOV=%d Projection=%s Light=%s",                    //Taken from ex13.c
      th,ph,dim,fov,mode?"Perpective":"Orthogonal",light?"On":"Off");
    if (light)
    {
@@ -402,6 +409,9 @@ void special(int key,int x,int y)
    //  Down arrow key - decrease elevation by 5 degrees
    else if (key == GLUT_KEY_DOWN)
       ph -= 5;
+    //  Smooth color model
+   else if (key == GLUT_KEY_F1)
+      smooth = 1-smooth;
    //  Keep angles to +/-360 degrees
    th %= 360;
    ph %= 360;
@@ -432,10 +442,10 @@ int main(int argc,char* argv[])
    glutInit(&argc,argv);
    //  Request double buffered, true color window 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-   //  Request 500 x 500 pixel window
+   //  Request 750 x 750 pixel window
    glutInitWindowSize(750,750);
    //  Create the window
-   glutCreateWindow("Sami Meharzi: HW 4");
+   glutCreateWindow("Sami Meharzi: HW 5");
    //  Tell GLUT to call "display" when the scene should be drawn
    glutDisplayFunc(display);
   //  Tell GLUT to call "reshape" when the window is resized
@@ -444,6 +454,7 @@ int main(int argc,char* argv[])
    glutSpecialFunc(special);
    //  Tell GLUT to call "key" when a key is pressed
    glutKeyboardFunc(key);
+   //   Tell GLUT what to do when program is idle
    glutIdleFunc(idle);
    //  Pass control to GLUT so it can interact with the user
    ErrCheck("init");
