@@ -1,0 +1,27 @@
+Sami Meharzi
+HW6 - Textures
+Completed in ~ 3 hours
+Unfortunately, did not have time to get lights to work so I took that stuff out. Will implement as soon as I get the chance.
+
+Instructions:
+1. Run make on Terminal
+2. Run ./hw6 on Terminal
+3. Have fun
+
+Controls after starting animation:
+Arrow Keys rotate the view
+1	- Toggle view for Object 1
+2	- Toggle view for Object 2
+3	- Toggle view for Object 3
+4	- Toggle view for Object 4
+5	- Toggle view for Object 5
+6 	- Toggle view for Object 6
+
+m 	- Switch between Orthogonal and Perspective view
++/- 	- Change the field of view for perspective
+z/Z 	- Zoom in and out
+Esc 	- Exits animation
+
+f 	- Change Floor Texture
+w 	- Change Wall Texture
+q 	- Change Roof Texture
