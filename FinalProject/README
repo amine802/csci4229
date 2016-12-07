@@ -4,7 +4,7 @@ Completed in ~ 12-14 hours
 
 My final project is a image puzzle game. A picture is loaded and split into a 4x4 grid. One piece has been removed and left as a blank space (the white tile). The goal is to switch the pieces with the white piece until the original image is recreated. The total moves taken is counted on the bottom left of the screen and is reset every time the tiles are randomized or reset to their original location.
 
-The original layout of the project was easy to write. However, the code was unnecessarily long and messy. Most of the time spent on this project was making sure that tiles swapped properly and trying to write all the functions in as little lines as possible in order.
+The original layout of the project was easy to write. However, the code was unnecessarily long and messy (somewhere between 600-700). Most of the time spent on this project was making sure that tiles swapped properly and trying to write all the functions in as little lines as possible in order to achieve that.
 
 Instructions:
 1. Run make on Terminal
